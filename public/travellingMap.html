@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <meta name="description" content="Explore my adventures around the world!">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel = "stylesheet" type = "text/css" href = "myStyle.css"/>
+  <title>Travelling Map</title>
+  <link rel="icon" type="image/png" href="https://cdn.glitch.global/c01643a0-ea84-4c99-995b-da2512c16d5a/camera_icon5.png?v=1668667413993">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGv0ynrcyBlKAJdyxRX-Euyrfz7ANcfAg&libraries=places"></script>
+<!--     <script src="./sha256.js"></script> -->
+    <script src="./infobubble.js"></script>
+    <meta property="og:title" content="A map about my adventures" />
+  <meta property="og:description"
+    content="A map about my adventures" />
+  <meta property="og:image" content="https://cdn.glitch.global/c01643a0-ea84-4c99-995b-da2512c16d5a/sitePreview.png?v=1668667469736" />
+  <meta property="og:type" content="website" />
+  <!-- <meta property="og:url" content="https://dizzon.000webhostapp.com/travellingMap.html" /> -->
+</head>
+
+<body>
+<div id="show"></div>
+<input id="pac-input" type="text" placeholder="Search Box">
+<div id="custom_button_area">
+    <button id="save_marker_button" class="custom_button" title="edit"><i class="material-icons">create</i></button>
+    <button id="delete_marker_button" class="custom_button" title="delete"><i class="material-icons">delete_forever</i></button>
+</div>
+<div id="map"></div>
+
+<script>
+var login = false;
+var bubbleopened=false;
+var marker_clicked = false;
+var marker_id;
+var map;
+var infoBubble = new InfoBubble();
+var placeTagBubble = new InfoBubble();
+var current_marker;
+var markers = [];
+var password;
+var markerList = [];
+
+
+
+function initialize() {
+    if (window.innerHeight > window.innerWidth){
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 38.626086,lng:73.297037},
+            zoom: 2,
+            zoomControl: true,
+            mapTypeControl: false,
+            streetViewControl: true,
+            streetViewControlOptions:{ position: google.maps.ControlPosition.TOP_LEFT},
+            fullscreenControl: true,
+            fullscreenControlOptions:{ position: google.maps.ControlPosition.BOTTOM_LEFT}
+        });
+    }
+    else{
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 38.626086,lng:73.297037},
+            zoom: 3,
+            zoomControl: true,
+            mapTypeControl: false,
+            streetViewControl: true,
+            streetViewControlOptions:{ position: google.maps.ControlPosition.LEFT_CENTER},
+            fullscreenControl: true,
+            fullscreenControlOptions:{ position: google.maps.ControlPosition.BOTTOM_LEFT}
+        });
+    }
+    document.getElementById("pac-input").style.display = "block";
+    //searchForPlace('長洲西堤道',map);
+    createSearchBox(map);
+    
+    
+    
+    google.maps.event.addListener(map, 'click', function() {
+        if(bubbleopened==true){
+            infoBubble.close();
+            placeTagBubble.close();
+            bubbleopened=false;
+            map.panBy(0,window.innerHeight/2);
+        }
+        marker_clicked = false;
+        document.getElementById("custom_button_area").disabled = true;
+        document.getElementById("custom_button_area").style.display = "none";
+    });
+    
+    
+
+  
+  google.maps.event.addListener(infoBubble, 'closeclick', function() {
+    infoBubble.close();//close the info-bubble when user clicked the "close" icon
+    
+    placeTagBubble.close();
+    bubbleopened=false;
+    document.getElementById("custom_button_area").disabled = true;
+    document.getElementById("custom_button_area").style.display = "none";
+    map.panBy(0,window.innerHeight/2);
+  });
+  
+  getMarkerInfoFromServer();
+}
+
+
+
+
+
+
+
+
+
+
+function getMarkerInfoFromServer(){
+  if(markerList.length > 0){
+    for(var i=0;i<markerList.length;i++){
+      markerList[i].setMap(null);
+    }
+  }
+  markerList = [];
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", "/travelMap/getAllMarkers", true);
+  xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xmlhttp.send();
+
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var fetched_result =  JSON.parse(this.responseText).data;
+      // var splittedResult = fetched_result.split("<br>");
+      //define marker icon
+      var image = {
+        url: "https://cdn.glitch.global/c01643a0-ea84-4c99-995b-da2512c16d5a/camera_icon.png?v=1668667422765",
+        scaledSize: new google.maps.Size(40,40)
+      };
+      fetched_result.forEach(thisMarker => {
+        var latLong = thisMarker.location.split(",");//split the lat-long pair
+        createMarker(
+          map,
+          image,
+          thisMarker.id,// markerID
+          thisMarker.message,// message
+          thisMarker.photo,// photoString
+          parseFloat(String(latLong[0]).trim()),// latitute
+          parseFloat(String(latLong[1]).trim())// longitute
+        );
+      });
+      // for (var i=0;i<splittedResult.length;i++){
+      //   var splittedRow = splittedResult[i].split(";");
+      //   var latLong = splittedRow[splittedRow.length-1].split(",");//split the lat-long pair
+      //   createMarker(
+      //     map,
+      //     image,
+      //     splittedRow[0],// markerID
+      //     splittedRow[1],// message
+      //     splittedRow[2],// photoString
+      //     parseFloat(String(latLong[0]).trim()),// latitute
+      //     parseFloat(String(latLong[1]).trim())// longitute
+      //   );
+      // }
+    }
+  };
+}
+
+
+
+
+function createMarker(map,image,i,message,photoString,lat,lng){
+  var marker = new google.maps.Marker({ map: map, position: {lat: lat, lng: lng}, icon: image} );
+    marker.set('id',i);
+    marker.set('message',message);
+    marker.set('photoString',photoString);
+    marker.set('lat',lat);
+    marker.set('lng',lng);
+
+    marker.addListener('mouseover',function(){
+      if(bubbleopened==false){//when mouse into the marker and the photo-info-bubble is not opened, show a message instead of photo
+        placeTagBubble.setContent("<h3 style='text-align: center'>"+message+"<h3>");
+        placeTagBubble.set('minWidth',100);
+        placeTagBubble.set('maxWidth',250);
+        placeTagBubble.set('maxHeight',50);
+        placeTagBubble.set('hideCloseButton',true);
+        placeTagBubble.set('disableAutoPan',true);
+        placeTagBubble.open(map,marker);
+      }
+    });
+
+    marker.addListener('mouseout',function(){
+      if(bubbleopened==false){//when mouse out of the marker and the photo-info-bubble is not opened, close this message bubble
+          placeTagBubble.close();
+      }
+    });
+
+
+    var photoStringArray = photoString.split(",");
+    var contents = "<h2 style='text-align: center'>"+message+"</h2>";
+    for(var i=0; i<photoStringArray.length; i++){
+      contents = contents + "<br><img onload='fitPhoto(this)' src='" + photoStringArray[i] + "' ></img>"
+    }
+    
+    marker.addListener('click',function(){
+      bubbleopened=true;
+      marker_clicked = true;
+      infoBubble.setContent(contents);
+      infoBubble.set('hideCloseButton',false);
+      
+      resizeInfoBubble();
+      infoBubble.open(map, marker);
+      current_marker = marker;
+      document.getElementById("custom_button_area").disabled = false;
+      document.getElementById("custom_button_area").style.display = "block";
+      map.panTo({lat:marker.getPosition().lat(), lng:marker.getPosition().lng()});
+      map.panBy(0,-window.innerHeight/2);
+    });
+
+    markerList.push(marker);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function createSearchBox(map){
+
+    var input = document.getElementById('pac-input');
+    if (window.innerHeight > window.innerWidth){
+      input.style.width = window.innerWidth*0.75;
+    }
+    else{
+      input.style.width = window.innerWidth*0.25;
+    }
+    var searchBox = new google.maps.places.SearchBox(input);
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);//set the location of the search bar
+
+    var custom_button_area = document.getElementById('custom_button_area');
+    map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(custom_button_area);//set the location of the button area
+    
+    map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());//to search inside a bounded area, it's from google documentation
+    });
+
+    
+
+
+    searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
+        if (places.length == 0) {
+            return;
+        }
+        places.forEach(function(place) {
+            if (!place.geometry) {
+                console.log("Returned place contains no geometry");
+                return;
+            }
+            var marker = new google.maps.Marker({
+                map: map,
+                //icon: icon,
+                title: place.name,
+                position: place.geometry.location,
+                id: 'undefined'
+            });
+            
+            marker.addListener('click',function(){
+                current_marker = marker;
+                marker_clicked = true;
+                document.getElementById("custom_button_area").disabled = false;
+                document.getElementById("custom_button_area").style.display = "block";
+                /*alert('lat:'+marker.getPosition().lat()+',lng:'+marker.getPosition().lng());*/
+            });
+            map.panTo({lat:marker.getPosition().lat(), lng:marker.getPosition().lng()});
+        });
+    });
+}
+
+
+
+function resizeInfoBubble(){
+  if (window.innerHeight > window.innerWidth){
+    infoBubble.set('minWidth', window.innerWidth-50);
+    infoBubble.set('maxWidth', window.innerWidth-50);
+    infoBubble.set('maxHeight',(window.innerHeight-130));
+    infoBubble.set('minHeight',(window.innerHeight-130));
+    infoBubble.set('disableAutoPan',true);
+    infoBubble.set('shadowStyle',1);
+  }
+  else{
+    infoBubble.set('minWidth', (window.innerWidth-120)*0.7);
+    infoBubble.set('maxWidth', (window.innerWidth-120)*0.7);
+    infoBubble.set('maxHeight',(window.innerHeight-130)*0.95);
+    infoBubble.set('minHeight',(window.innerHeight-130)*0.95);
+    infoBubble.set('disableAutoPan',true);
+    infoBubble.set('shadowStyle',1);   
+  }
+}
+
+
+function fitPhoto(imgInstance){
+  imgInstance.style.display = 'block';
+  imgInstance.style.marginLeft = 'auto';
+  imgInstance.style.marginRight = 'auto';
+  //mobile user
+  if (window.innerHeight > window.innerWidth){
+    imgInstance.width = (window.innerWidth-50);
+      if(imgInstance.height > (window.innerHeight-130)-18.72){
+          imgInstance.removeAttribute('width');
+          imgInstance.height = ((window.innerHeight-130)-18.72) * 0.95;
+      }
+  }
+  //computer user
+  else{
+      imgInstance.width = (window.innerWidth-120)*0.7*0.98;
+      if(imgInstance.height > (window.innerHeight-130)*0.9-18.72){
+          imgInstance.removeAttribute('width');
+          imgInstance.height = ((window.innerHeight-130)*0.9-18.72) * 0.95;
+      }
+  }
+}
+
+
+
+
+
+
+document.getElementById('delete_marker_button').addEventListener('click',function(){
+   if(current_marker['id'] == 'undefined'){//this means it is a temperary marker
+       current_marker.setMap(null);
+       document.getElementById("custom_button_area").style.display = "none";
+   }
+   else{
+    alert("This part is under construction, sorry!");// not open to public about deleting markers
+   }
+});
+
+
+
+
+
+
+
+document.getElementById('save_marker_button').addEventListener('click',function(){
+  password = prompt("You shall not pass","abracadabra !");
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST","/travelMap/auth?password="+password,true);
+  xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xmlhttp.send();
+  console.log(password);
+  xmlhttp.onreadystatechange = function(){
+    if(this.readyState == 4 && this.status == 200){
+      var fetched_result = this.responseText;
+      console.log(fetched_result);
+      if(fetched_result == 'success'){
+        map.panTo({lat:current_marker.getPosition().lat(), lng:current_marker.getPosition().lng()});
+        map.panBy(0,-window.innerHeight/2);
+        if(current_marker['id'] == 'undefined'){
+          infoBubble.setContent('<div id="marker_edit_zone">Message: <input id="message" type="text" name="message"><br>Photos: <textarea id="photoString" rows="4" cols="50" placeholder="Put photos url here, seperated by a ,"></textarea><br><button id="marker_submit_button" class="custom_button" onclick="save_and_close_editzone()">save & close</button></div>');
+          infoBubble.set('hideCloseButton',true);
+          infoBubble.open(map, current_marker);
+          bubbleopened=true;
+          //document.getElementById("marker_edit_zone").style.display = "block";
+        }
+        else{
+        //EDIT MODE START
+          infoBubble.setContent('<div id="marker_edit_zone">Message: <input id="message" type="text" name="message" value="'+current_marker['message']+'"><br>Photos: <textarea id="photoString" rows="4" cols="50">'+current_marker['photoString']+'</textarea><br><button id="marker_submit_button" class="custom_button" onclick="save_and_close_editzone()">save & close</button></div>');
+          infoBubble.set('hideCloseButton',true);
+          infoBubble.open(map, current_marker);
+          bubbleopened=true;
+        }
+      }
+    }
+  }
+  
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+function save_and_close_editzone(){
+  if(current_marker['id'] == 'undefined'){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", "/travelMap/saveTempMarker?"+'password='+password+'&message='+document.getElementById("message").value+'&photoString='+document.getElementById("photoString").value+'&location='+current_marker.getPosition().lat()+','+current_marker.getPosition().lng(), true);
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.send();
+
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var fetched_result =  this.responseText;
+        if(fetched_result = "success"){
+          current_marker.setMap(null);
+          if(bubbleopened==true){
+            infoBubble.close();
+            
+            placeTagBubble.close();
+            bubbleopened=false;
+          }
+          marker_clicked=false;
+          document.getElementById("custom_button_area").disabled = true;
+          document.getElementById("custom_button_area").style.display="none";
+          getMarkerInfoFromServer();
+        }
+      }
+    };
+  }
+  else{//markers are real
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", "/travelMap/saveExistingMarker?"+'password='+password+'&id='+current_marker['id']+'&message='+document.getElementById("message").value+'&photoString='+document.getElementById("photoString").value+'&location='+current_marker.getPosition().lat()+','+current_marker.getPosition().lng(), true);
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.send();
+
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var fetched_result =  this.responseText;
+        if(fetched_result = "success"){
+          if(bubbleopened==true){
+            infoBubble.close();
+            
+            placeTagBubble.close();
+            bubbleopened=false;
+            map.panBy(0,window.innerHeight/2);
+          }
+          marker_clicked=false;
+          document.getElementById("custom_button_area").disabled = true;
+          document.getElementById("custom_button_area").style.display="none";
+          getMarkerInfoFromServer();
+        }
+      }
+    };
+  }
+}
+
+
+
+
+
+
+
+
+function check(){
+  return true;
+  // password = prompt("Who are you?","Please enter password");
+  // var xmlhttp = new XMLHttpRequest();
+  // xmlhttp.open("POST","server.php",false);
+  // xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  // xmlhttp.send('password='+password+'&requestType=checkPassword');
+
+  // xmlhttp.onreadystatechange = function(){
+  //   if(this.readyState == 4 && this.status == 200){
+  //     var fetched_result = this.responseText;
+  //     if(fetched_result == 'success'){
+  //       return true;
+  //     }
+  //     else{
+  //       return false;
+  //     }
+  //   }
+  // }
+}
+
+
+
+
+
+
+
+//add a google map event listener
+//call the function "initialize()" when window is loaded
+google.maps.event.addDomListener(window, 'load', initialize);
+
+
+    </script>
+  </body>
+</html>

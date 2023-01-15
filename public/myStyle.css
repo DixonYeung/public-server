@@ -1,0 +1,121 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#map {
+  height: 100%;
+}
+#show{
+ 	display: none;
+}
+      /*
+      .pac-controls {
+        display: inline-block;
+        padding: 5px 11px;
+      }
+
+      .pac-controls label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+      */
+#pac-input {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 400px;
+  display: none;
+}
+
+#pac-input:focus {
+  border-color: #4d90fe;
+}
+
+.custom_button{
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    font-family: Roboto;
+    background-color: #ffffff;
+    border-radius: 4px;
+    border: 2px solid #ffffff;
+    color: #404040;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    display: block;
+    margin: 5px 10px 5px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+.custom_button:hover{
+  background-color: #dfdfdf;
+  border: 2px solid #dfdfdf;
+}
+#custom_button_area{
+  display: none;
+}
+
+@media screen and (orientation: portrait) {
+  #pac-input {
+    background-color: #fff;
+      font-family: Roboto;
+      font-size: 15px;
+      font-weight: 300;
+      margin-left: 12px;
+      padding: 0 11px 0 13px;
+      text-overflow: ellipsis;
+      width: 70%;
+      display: none;
+    }
+}
+@media screen and (orientation: landscape) {
+    #pac-input {
+    background-color: #fff;
+      font-family: Roboto;
+      font-size: 15px;
+      font-weight: 300;
+      margin-left: 12px;
+      padding: 0 11px 0 13px;
+      text-overflow: ellipsis;
+      width: 20%;
+      display: none;
+    }
+}
+
+h2{
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+}
+
+#contentContainer::-webkit-scrollbar-track{
+    border-radius: 10px;
+}
+#photoString{
+    width: 100%;
+}
+#marker_submit_button{
+    width: max-content;
+}
+
+.material-icons{
+  font-size: unset !important;
+}
+
+#closeButton.custom_button{
+  width: 15px;
+  height: 15px;
+}
+
+#contentContainer, #contentContainer *{
+  background-color: #404040 !important;
+  color: white;
+}
+
+input#message{
+  width: 100%;
+}
