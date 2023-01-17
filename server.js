@@ -8,8 +8,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { MongoClient } from 'mongodb';
 const mongoClient = new MongoClient(process.env.MONGO_URI);
-let travelMapDatabase;
-let markerInfoCollection;
+var travelMapDatabase;
+var markerInfoCollection;
 
 import Discord from 'discord.js';
 const discordClient = new Discord.Client({
@@ -35,7 +35,7 @@ discordClient.on("messageCreate", (message) => {
 discordClient.login(process.env.DISCORD_BOT_TOKEN);
 
 import express from 'express';
-var app = express();
+const app = express();
 
 //SET UP STATIC FILES
 app.use('/public', express.static(__dirname + '/public'));
@@ -98,6 +98,18 @@ app.post("/travelMap/saveExistingMarker", async (req, res) => {
     );
   }
 });
+
+app.get("/ping", (req, res) => {
+  // create a minimized response for cron job to keep server alive
+  res.writeHead(404, {
+    'Content-Length': 0,
+    'X-Powered-By': '',
+    'Date': '',
+    'Connection': '',
+    'Keep-Alive': ''
+  });
+  res.end();
+})
 
 // Run the server and report out to the logs
 var server = app.listen({ port: process.env.PORT || 5000 }, (err) => {
