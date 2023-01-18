@@ -25,10 +25,34 @@ discordClient.on('ready', () => {
   //console.log(discordClient.channels);
 });
 
-discordClient.on("messageCreate", (message) => {
+import { Configuration, OpenAIApi } from 'openai';
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+discordClient.on("messageCreate", async (message) => {
   if (message.mentions.has(discordClient.user.id)) {
     const channel = discordClient.channels.cache.get(message.channelId);
-    channel.send(`Hi ${message.author.username} !`);
+    const actualMessage = message.content.replace(/<@[0-9]+>/gm, '').trim();
+    try{
+      const completion = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: actualMessage,
+        temperature: 0.5,
+        max_tokens: 256
+      });
+      channel.send(completion.data.choices[0].text);
+    } catch(err) {
+      if (err.response) {
+        console.log(err.response.status);
+        console.log(err.response.data);
+      } else {
+        console.log(err.message);
+      }
+      channel.send('Oops! API has returned error');
+    }
   }
 });
 
