@@ -234,6 +234,7 @@ function InfoBubble(id, opt_options) {
   
     // Content area
     var contentContainer = this.contentContainer_ = document.createElement('DIV');
+    if(id) contentContainer.id='contentContainer';
     contentContainer.style['overflowX'] = 'auto';
     contentContainer.style['overflowY'] = 'auto';
     contentContainer.style['cursor'] = 'default';
