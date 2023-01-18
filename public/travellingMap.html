@@ -5,28 +5,27 @@
   <meta charset="utf-8">
   <meta name="description" content="Explore my adventures around the world!">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel = "stylesheet" type = "text/css" href = "myStyle.css"/>
+  <link rel="stylesheet" type="text/css" href="myStyle.css" />
   <title>Travelling Map</title>
   <link rel="icon" type="image/png" href="./site-icon.png">
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGv0ynrcyBlKAJdyxRX-Euyrfz7ANcfAg&libraries=places"></script>
-<!--     <script src="./sha256.js"></script> -->
-    <script src="./infobubble.js"></script>
-    <meta property="og:title" content="A map about my adventures" />
-  <meta property="og:description"
-    content="A map about my adventures" />
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzIYppFoKJnCfoobuprKtsDmAUmpw3zDM&libraries=places"></script>
+  <!--     <script src="./sha256.js"></script> -->
+  <script src="./infobubble.js"></script>
+  <meta property="og:title" content="A map about my adventures" />
+  <meta property="og:description" content="A map about my adventures" />
   <meta property="og:image" content="https://live.staticflickr.com/65535/52629533937_bcc6dc40f6_b.jpg" />
   <meta property="og:type" content="website" />
   <!-- <meta property="og:url" content="https://dizzon.000webhostapp.com/travellingMap.html" /> -->
 </head>
 
 <body>
-<div id="show"></div>
-<input id="pac-input" type="text" placeholder="Search Box">
-<div id="custom_button_area">
+  <div id="show"></div>
+  <input id="pac-input" type="text" placeholder="Search Box">
+  <div id="custom_button_area">
     <button id="save_marker_button" class="custom_button" title="edit"><i class="material-icons">create</i></button>
     <button id="delete_marker_button" class="custom_button" title="delete"><i class="material-icons">delete_forever</i></button>
-</div>
-<div id="map"></div>
+  </div>
+  <div id="map"></div>
 
 <script>
 var login = false;
@@ -34,7 +33,7 @@ var bubbleopened=false;
 var marker_clicked = false;
 var marker_id;
 var map;
-var infoBubble = new InfoBubble();
+var infoBubble = new InfoBubble('mainInfoBubble');
 var placeTagBubble = new InfoBubble();
 var current_marker;
 var markers = [];
@@ -320,25 +319,7 @@ function resizeInfoBubble(){
 
 
 function fitPhoto(imgInstance){
-  imgInstance.style.display = 'block';
-  imgInstance.style.marginLeft = 'auto';
-  imgInstance.style.marginRight = 'auto';
-  //mobile user
-  if (window.innerHeight > window.innerWidth){
-    imgInstance.width = (window.innerWidth-50);
-      if(imgInstance.height > (window.innerHeight-130)-18.72){
-          imgInstance.removeAttribute('width');
-          imgInstance.height = ((window.innerHeight-130)-18.72) * 0.95;
-      }
-  }
-  //computer user
-  else{
-      imgInstance.width = (window.innerWidth-120)*0.7*0.98;
-      if(imgInstance.height > (window.innerHeight-130)*0.9-18.72){
-          imgInstance.removeAttribute('width');
-          imgInstance.height = ((window.innerHeight-130)*0.9-18.72) * 0.95;
-      }
-  }
+  imgInstance.classList.add(imgInstance.height > imgInstance.width ? 'portrait' : 'landscape' );
 }
 
 

@@ -1,15 +1,19 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
 }
+
 #map {
   height: 100%;
 }
-#show{
- 	display: none;
+
+#show {
+  display: none;
 }
-      /*
+
+/*
       .pac-controls {
         display: inline-block;
         padding: 5px 11px;
@@ -37,85 +41,107 @@ html, body {
   border-color: #4d90fe;
 }
 
-.custom_button{
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-    font-family: Roboto;
-    background-color: #ffffff;
-    border-radius: 4px;
-    border: 2px solid #ffffff;
-    color: #404040;
-    box-shadow: 0 2px 6px rgba(0,0,0,.3);
-    display: block;
-    margin: 5px 10px 5px 0px;
-    padding: 0px 0px 0px 0px;
+.custom_button {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  font-family: Roboto;
+  background-color: #ffffff;
+  border-radius: 4px;
+  border: 2px solid #ffffff;
+  color: #404040;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .3);
+  display: block;
+  margin: 5px 10px 5px 0px;
+  padding: 0px 0px 0px 0px;
 }
 
-.custom_button:hover{
+.custom_button:hover {
   background-color: #dfdfdf;
   border: 2px solid #dfdfdf;
 }
-#custom_button_area{
+
+#custom_button_area {
   display: none;
+}
+
+h2 {
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+}
+
+#contentContainer::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+#photoString {
+  width: 100%;
+}
+
+#marker_submit_button {
+  width: max-content;
+}
+
+.material-icons {
+  font-size: unset !important;
+}
+
+#closeButton.custom_button {
+  width: 15px;
+  height: 15px;
+}
+
+#contentContainer,
+#contentContainer * {
+  background-color: #404040 !important;
+  color: white;
+}
+
+input#message {
+  width: 100%;
+}
+
+#mainInfoBubble #contentContainer img {
+  display: block;
+  margin: auto auto;
 }
 
 @media screen and (orientation: portrait) {
   #pac-input {
     background-color: #fff;
-      font-family: Roboto;
-      font-size: 15px;
-      font-weight: 300;
-      margin-left: 12px;
-      padding: 0 11px 0 13px;
-      text-overflow: ellipsis;
-      width: 70%;
-      display: none;
-    }
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+    margin-left: 12px;
+    padding: 0 11px 0 13px;
+    text-overflow: ellipsis;
+    width: 70%;
+    display: none;
+  }
+
+  #mainInfoBubble #contentContainer img {
+    width: calc(100vw - 70px);
+  }
 }
+
 @media screen and (orientation: landscape) {
-    #pac-input {
+  #pac-input {
     background-color: #fff;
-      font-family: Roboto;
-      font-size: 15px;
-      font-weight: 300;
-      margin-left: 12px;
-      padding: 0 11px 0 13px;
-      text-overflow: ellipsis;
-      width: 20%;
-      display: none;
-    }
-}
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+    margin-left: 12px;
+    padding: 0 11px 0 13px;
+    text-overflow: ellipsis;
+    width: 20%;
+    display: none;
+  }
 
-h2{
-    margin-block-start: 0em;
-    margin-block-end: 0em;
-}
+  #mainInfoBubble #contentContainer img.landscape {
+    width: calc((100vw - 120px) * 0.7 * 0.98);
+  }
 
-#contentContainer::-webkit-scrollbar-track{
-    border-radius: 10px;
-}
-#photoString{
-    width: 100%;
-}
-#marker_submit_button{
-    width: max-content;
-}
-
-.material-icons{
-  font-size: unset !important;
-}
-
-#closeButton.custom_button{
-  width: 15px;
-  height: 15px;
-}
-
-#contentContainer, #contentContainer *{
-  background-color: #404040 !important;
-  color: white;
-}
-
-input#message{
-  width: 100%;
+  #mainInfoBubble #contentContainer img.portrait {
+    height: calc(((100vh - 130px) * 0.9 - 18.72px) * 0.95);
+  }
 }
