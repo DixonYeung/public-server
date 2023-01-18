@@ -35,7 +35,7 @@ const openai = new OpenAIApi(configuration);
 discordClient.on("messageCreate", async (message) => {
   if (message.mentions.has(discordClient.user.id)) {
     // const channel = discordClient.channels.cache.get(message.channelId);
-    const actualMessage = message.content.replace(/<@[0-9]+>/gm, '').trim();
+    const actualMessage = message.content.replace(`<@${discordClient.user.id}>`, '').trim();
     try{
       const completion = await openai.createCompletion({
         model: "text-davinci-003",
