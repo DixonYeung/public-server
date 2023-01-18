@@ -34,7 +34,7 @@ const openai = new OpenAIApi(configuration);
 
 discordClient.on("messageCreate", async (message) => {
   if (message.mentions.has(discordClient.user.id)) {
-    const channel = discordClient.channels.cache.get(message.channelId);
+    // const channel = discordClient.channels.cache.get(message.channelId);
     const actualMessage = message.content.replace(/<@[0-9]+>/gm, '').trim();
     try{
       const completion = await openai.createCompletion({
@@ -43,7 +43,7 @@ discordClient.on("messageCreate", async (message) => {
         temperature: 0.5,
         max_tokens: 256
       });
-      channel.send(completion.data.choices[0].text);
+      return message.reply(completion.data.choices[0].text);
     } catch(err) {
       if (err.response) {
         console.log(err.response.status);
@@ -51,7 +51,7 @@ discordClient.on("messageCreate", async (message) => {
       } else {
         console.log(err.message);
       }
-      channel.send('Oops! API has returned error');
+      return message.reply('Oops! API has returned error');
     }
   }
 });
