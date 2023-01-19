@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import { openaiClient } from '../OpenAPI/myOpenapi.js';
+import { openaiClient } from '../openaiClient/index.js';
 export const createDiscordBot = ()=>{
     const discordClient = new Discord.Client({
     intents: [
