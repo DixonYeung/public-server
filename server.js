@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import travelMapController from './travelMap/controller.js';
+import travelMapController from './travelMap/travelMap.controller.js';
 import { keepServerAlive } from './tools.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -12,7 +12,7 @@ const mongoClient = new MongoClient(process.env.MONGO_URI);
 import express from 'express';
 const app = express();
 
-import { createDiscordBot } from './discord/discordBot.js';
+import { createDiscordBot } from './external/discord/discordBot.js';
 createDiscordBot();
 
 app.use('/public', express.static(__dirname + '/public'));//set up static files

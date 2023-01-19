@@ -1,4 +1,4 @@
-import { getAllMarkers, authenticate, saveTempMarker, saveExistingMarker } from './service.js';
+import { getAllMarkers, authenticate, saveTempMarker, saveExistingMarker } from './travelMap.service.js';
 import express from 'express';
 const router = express.Router();
 
