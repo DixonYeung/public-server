@@ -138,10 +138,11 @@ input#message {
   }
 
   #mainInfoBubble #contentContainer img.landscape {
-    width: calc((100vw - 120px) * 0.7 * 0.98);
+    max-width: calc((100vw - 120px) * 0.7 * 0.95);
+    max-height: calc((100vh - 130px - 18.72px) * 0.9);
   }
 
   #mainInfoBubble #contentContainer img.portrait {
-    height: calc(((100vh - 130px) * 0.9 - 18.72px) * 0.95);
+    max-height: calc((100vh - 130px - 18.72px) * 0.9);
   }
 }
